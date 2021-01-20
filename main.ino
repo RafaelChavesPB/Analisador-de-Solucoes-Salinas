@@ -11,10 +11,6 @@
  OneWire DS18B20(tempPin);
  DallasTemperature tempSensor(&DS18B20);
 
- bool diff(){
-   return abs(control-lastControl)<0.0001;
- }
-
  String makeJson(){
    String json;
    json+="{\"tensao\":" + String(voltage,5);
