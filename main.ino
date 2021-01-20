@@ -17,19 +17,11 @@
 
  String makeJson(){
    String json;
-   json+='{';
-   json+="\"tensao\":";
-   json+= String(voltage,5);
-   json+=",\"tensaoStd\":";
-   json+= String(voltageStd,5);
-   json+=",\"controle\":";
-   json+= String(control,5);
-   json+=",\"vazao\":";
-   json+= String(flowRate);
-   json+=",\"temperatura\":";
-   json+= String(temperature);
-   json+='}';
-   json+='\n';
+   json+="{\"tensao\":" + String(voltage,5);
+   json+=",\"tensaoStd\":" + String(voltageStd,5);
+   json+=",\"controle\":" + String(control,5);
+   json+=",\"vazao\":" + String(flowRate);
+   json+=",\"temperatura\":" + String(temperature) + '}\n';
    return json;
  }
 
