@@ -3,7 +3,7 @@
  #include <OneWire.h>
  #include <DallasTemperature.h>
  //Preto - terra, vermelho - controle, branco - capacitor
- double control, voltage,voltageStd, flowRate, temperature, timeFactor=100.0, factor = 7.5;
+ double control, capacitor, vazao, , timeFactor=100.0, factor = 7.5;
  volatile int pulses;
  int lastControl, currentTime, lastTime;
  const byte interruptPin=3,stdPin=A0,tempPin=7;
@@ -14,11 +14,10 @@
 
  String makeJson(){
    String json;
-   json+="{\"tensao\":" + String(voltage,5);
-   json+=",\"tensaoStd\":" + String(voltageStd,5);
+   json+="{\"tensao\":" + String(capacitor,5);
    json+=",\"controle\":" + String(control,5);
-   json+=",\"vazao\":" + String(flowRate);
-   json+=",\"temperatura\":" + String(temperature) + '}\n';
+   json+=",\"vazao\":" + String(vazao);
+   json+=",\"temperatura\":" + String() + "}\n";
    return json;
  }
 
@@ -36,17 +35,17 @@
    pulses = 0;
    lastTime = millis();
  }
+ 
  void loop(){
    ads.setGain(2);
    currentTime = millis();
    if(currentTime-lastTime>=timeFactor){
      detachInterrupt(interruptPin);
      tempSensor.requestTemperatures();
-     temperature = tempSensor.getTempCByIndex(0);
-     flowRate = ((timeFactor / (currentTime - lastTime)) * pulses)/factor;
-     voltage = ads.toVoltage(ads.readADC(0)); 
+      = tempSensor.getTempCByIndex(0);
+     vazao = ((timeFactor / (currentTime - lastTime)) * pulses)/factor;
+     capacitor = ads.toVoltage(ads.readADC(0)); 
      control = ads.toVoltage(ads.readADC(1));      
-     voltageStd = 5*analogRead(A0)/1024.0; 
      Serial.print(makeJson());
      attachInterrupt(digitalPinToInterrupt(interruptPin),pulseCounter,FALLING);
      lastControl=control;
