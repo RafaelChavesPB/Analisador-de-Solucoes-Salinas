@@ -1,11 +1,11 @@
 #include <ADS1X15.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-
-/*  ============= Global Constants ============= */
-
-const double timeFactor = 100, flowFactor = 4.5;
-const byte interruptPin = 3, temperaturePin = 7;
+#define DECIMAL_PLACES 5
+#define TIME_FACTOR 100.0
+#define FLOW_FACTOR 4.5
+#define INTERRUPT_PIN 3
+#define TEMPERATURE_PIN 7
 
 /* ============= Global Variables ============= */
 
@@ -13,7 +13,7 @@ volatile int pulses = 0;
 int currentTime, startTime;
 double controlVoltage, capacitorVoltage, volumetricFlowRate, temperature, concentration, density, massFlowRate;
 ADS1115 ads(0x48);
-OneWire DS18B20(temperaturePin);
+OneWire DS18B20(TEMPERATURE_PIN);
 DallasTemperature temperaturSensor(&DS18B20);
 
 /* ============= Functions ============= */
@@ -25,12 +25,19 @@ void pulseIncrement()
 
 String makeDataPackage()
 {
-  String json =
-      "{\"capacitorVoltage\":" + String(capacitorVoltage, 5) 
-    + ",\"controlVoltage\":" + String(controlVoltage, 5) 
-    + ",\"volumetricFlowRate\":" + String(volumetricFlowRate) 
-    + ",\"temperature\":" + String(temperature) + "}\n";
+  String json 
+    = "{\"capacitorVoltage\":" + String(capacitorVoltage, DECIMAL_PLACES)
+    + ",\"temperature\":" + String(temperature, DECIMAL_PLACES) 
+    + ",\"concetration\": " + String(concentration,DECIMAL_PLACES)
+    + ",\"density\": " + String(density,DECIMAL_PLACES)
+    + ",\"volumetricFlowRate\": " + String(volumetricFlowRate,DECIMAL_PLACES)
+    + ",\"massFlowRate\":" + String(massFlowRate, DECIMAL_PLACES)
+    + "}\n";
   return json;
+}
+
+double volumetricFlowRateCalc(){
+  return ((TIME_FACTOR / (currentTime - startTime)) * pulses) / FLOW_FACTOR; // [L/M]
 }
 
 double concentrationCalc()
@@ -53,30 +60,30 @@ double massFlowRateCalc(){
 void setup()
 {
   Serial.begin(9600);
-  pinMode(temperaturePin, INPUT);
-  pinMode(interruptPin, INPUT);
+  pinMode(TEMPERATURE_PIN, INPUT);
+  pinMode(INTERRUPT_PIN, INPUT);
   ads.begin();
+  ads.setGain(2);
   temperaturSensor.begin();
   startTime = millis();
 }
 
 void loop()
 {
-  ads.setGain(2);
   currentTime = millis();
-  if (currentTime - startTime >= timeFactor)
+  if (currentTime - startTime >= TIME_FACTOR)
   {
-    detachInterrupt(interruptPin);
+    detachInterrupt(INTERRUPT_PIN);
     temperaturSensor.requestTemperatures();  
     temperature = temperaturSensor.getTempCByIndex(0);
-    volumetricFlowRate = ((timeFactor / (currentTime - startTime)) * pulses) / flowFactor; //volumetricFlowRate [L/M]
+    volumetricFlowRate = volumetricFlowRateCalc(); 
     capacitorVoltage = ads.toVoltage(ads.readADC(0));
     controlVoltage = ads.toVoltage(ads.readADC(1));
     concentration = concentrationCalc();
     density = densityCalc();
     massFlowRate = massFlowRateCalc();
     Serial.print(makeDataPackage());
-    attachInterrupt(digitalPinToInterrupt(interruptPin), pulseIncrement, FALLING);
+    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), pulseIncrement, FALLING);
     startTime = millis();
     pulses = 0;
   }
