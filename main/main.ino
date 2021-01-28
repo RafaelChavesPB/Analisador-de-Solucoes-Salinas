@@ -67,6 +67,7 @@ void setup()
   ads.setGain(2);
   temperaturSensor.begin();
   startTime = millis();
+  attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), pulseIncrement, FALLING);
 }
 
 void loop()
@@ -74,7 +75,7 @@ void loop()
   currentTime = millis();
   if (currentTime - startTime >= TIME_FACTOR)
   {
-    detachInterrupt(INTERRUPT_PIN);
+    noInterrupts();
 //    temperaturSensor.requestTemperatures();  
 //    temperature = temperaturSensor.getTempCByIndex(0);
     volumetricFlowRate = volumetricFlowRateCalc(); 
@@ -85,9 +86,9 @@ void loop()
      massFlowRate = massFlowRateCalc();
     output = makeDataPackage();
     Serial.println(output);
-    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), pulseIncrement, FALLING);
     startTime = millis();
-    pulses = 1;
+    pulses = 0;
+    interrupts();
   }
 }
 
