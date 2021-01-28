@@ -1,34 +1,37 @@
 import serial
 import json
-import os
-
-
-# Functions #
-
-def unpackJSON(data):
-    keys = ["capacitorVoltage", "temperature", "concentration",
-            "density", "volumetricFlowRate", "massFlowRate"]
-    line = ","
-    for key in keys:
-        line += str(data[key]) + ","
-    return line
+import statistics
 
 # Variables declaration #
 
 sampleCounter = 0
-samplesToIgnore = 5
-samplesRequired = 20
-serialInput = serial.Serial('/dev/ttyACM0')
+samplesToIgnore = 0
+samplesRequired = 5
 labels = ["Tempo","Tensão", "Temperatura", "Concentração",
           "Densidade", "Vazão volumétrica", "Vazão mássica"]
+keys = ["capacitorVoltage", "temperature", "concentration",
+            "density", "volumetricFlowRate", "massFlowRate"]
+serialInput = serial.Serial('/dev/ttyACM0')
+inputDataList = {}
+for key in keys:
+    inputDataList[key]=[]
+    
+# Functions #
 
-# Getting the file name #
+def unpackJSON(data):
+    line = ","
+    for key in keys:
+        line += str(data[key]) + ","
+        inputDataList[key].append(float(data[key]))
+    return line
+
+# Receiving file name #
 
 while True:
     try:
         fileName = input('Digite o nome do arquivo que receberá os dados: ')
         csvFile = open('./samplingData/'+fileName+'.csv', 'x')
-        header = str()
+        header = ""
         for key in labels:
             header += key + ","
         csvFile.write(header+"\n")
@@ -36,7 +39,7 @@ while True:
     except:
         print('Nome indisponivel!')
 
-# Getting serial input and printing it in a csv file #
+# Receiving data from serial and printing it in csv file #
 
 while True:
     try:
@@ -57,4 +60,17 @@ while True:
     except:
         continue
 
-os.system(f'play -nq -t alsa synth {3} sine {440}')
+# Calculing final statistics #
+
+finalStatistics = '\nEstatísticas Finais\nMédia,'
+for key in keys:
+    finalStatistics+=str(statistics.mean(inputDataList[key]))+','
+finalStatistics +='\nModa,'
+for key in keys:
+    finalStatistics+=str(statistics.mode(inputDataList[key]))+','
+finalStatistics +='\nMediana,'
+for key in keys:
+    finalStatistics+=str(statistics.mean(inputDataList[key]))+','
+csvFile.write(finalStatistics)
+
+
