@@ -2,23 +2,33 @@ import serial
 import json
 import os
 
+
+# Functions #
+
 def unpackJSON(data):
     keys = ["capacitorVoltage", "temperature", "concentration",
             "density", "volumetricFlowRate", "massFlowRate"]
-    line = "rafael"
+    line = ","
     for key in keys:
         line += str(data[key]) + ","
     return line
 
-ser = serial.Serial('/dev/ttyACM0')
-labels = ["Tensão", "Temperatura", "Concentração",
+# Variables declaration #
+
+sampleCounter = 0
+samplesToIgnore = 5
+samplesRequired = 20
+serialInput = serial.Serial('/dev/ttyACM0')
+labels = ["Tempo","Tensão", "Temperatura", "Concentração",
           "Densidade", "Vazão volumétrica", "Vazão mássica"]
+
+# Getting the file name #
 
 while True:
     try:
         fileName = input('Digite o nome do arquivo que receberá os dados: ')
         csvFile = open('./samplingData/'+fileName+'.csv', 'x')
-        header = ""
+        header = str()
         for key in labels:
             header += key + ","
         csvFile.write(header+"\n")
@@ -26,23 +36,21 @@ while True:
     except:
         print('Nome indisponivel!')
 
+# Getting serial input and printing it in a csv file #
 
-sampleSize = 0
 while True:
     try:
-        data = json.loads(ser.readline().decode('utf-8'))
-        if sampleSize < 0:
+        data = json.loads(serialInput.readline().decode('utf-8'))
+        if sampleCounter < samplesToIgnore:
             print('ignorando...')
-        elif sampleSize <= 5:
-            print(sampleSize)
-            print(data)
+        elif sampleCounter < samplesToIgnore + samplesRequired:
             line = unpackJSON(data)
-            # print(line)
-            # csvFile.write(line+"\n")
+            csvFile.write(line+"\n")
+            print(line)
         else:
             print('Encerrando')
             break
-        sampleSize = sampleSize + 1
+        sampleCounter = sampleCounter + 1
     except KeyboardInterrupt:
         print('Encerrando')
         break
