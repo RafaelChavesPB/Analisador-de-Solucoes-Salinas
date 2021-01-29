@@ -3,7 +3,7 @@
 #include <DallasTemperature.h>
 #define DECIMAL_PLACES 5
 #define TIME_FACTOR 1000.0
-#define FLOW_FACTOR 4.5
+#define FLOW_FACTOR 5.5
 #define INTERRUPT_PIN 3
 #define TEMPERATURE_PIN 7
 
@@ -39,6 +39,7 @@ String makeDataPackage()
 
 double volumetricFlowRateCalc(){
   return ((TIME_FACTOR / (currentTime - startTime)) * pulses) / FLOW_FACTOR; // [L/M]
+  // return pulses;
 }
 
 double concentrationCalc()
