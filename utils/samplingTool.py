@@ -30,7 +30,7 @@ def unpackJSON(data):
 while True:
     try:
         fileName = input('Digite o nome do arquivo que receberá os dados: ')
-        csvFile = open('./samplingData/'+fileName+'.csv', 'x')
+        csvFile = open('./output_files/'+fileName+'.csv', 'x')
         header = ""
         for key in labels:
             header += key + ","
