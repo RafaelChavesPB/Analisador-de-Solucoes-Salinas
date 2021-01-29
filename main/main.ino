@@ -76,11 +76,11 @@ void loop()
   if (currentTime - startTime >= TIME_FACTOR)
   {
     noInterrupts();
-//    temperaturSensor.requestTemperatures();  
-//    temperature = temperaturSensor.getTempCByIndex(0);
+    temperaturSensor.requestTemperatures();  
+    temperature = temperaturSensor.getTempCByIndex(0);
     volumetricFlowRate = volumetricFlowRateCalc(); 
-//    capacitorVoltage = ads.toVoltage(ads.readADC(0));
-//    controlVoltage = ads.toVoltage(ads.readADC(1));
+    capacitorVoltage = ads.toVoltage(ads.readADC(0));
+    controlVoltage = ads.toVoltage(ads.readADC(1));
     concentration = concentrationCalc();
     density = densityCalc();
      massFlowRate = massFlowRateCalc();

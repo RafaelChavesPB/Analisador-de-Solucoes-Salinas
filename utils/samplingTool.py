@@ -6,12 +6,12 @@ import statistics
 
 sampleCounter = 0
 samplesToIgnore = 0
-samplesRequired = 5
+samplesRequired = 20
 labels = ["Tempo","Tensão", "Temperatura", "Concentração",
           "Densidade", "Vazão volumétrica", "Vazão mássica"]
 keys = ["capacitorVoltage", "temperature", "concentration",
             "density", "volumetricFlowRate", "massFlowRate"]
-serialInput = serial.Serial('/dev/ttyACM0')
+serialInput = serial.Serial('/dev/ttyUSB0')
 inputDataList = {}
 for key in keys:
     inputDataList[key]=[]
