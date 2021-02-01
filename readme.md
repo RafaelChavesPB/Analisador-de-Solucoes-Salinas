@@ -29,7 +29,7 @@ Para atingir esse objetivo são utilizados sensores de temperatura, vazão e con
 
 ### main
     
-    Código carreagado no arduino que é responsavel por fazer a leitura dos sensores, calcular e processar os dados para envia-los via serial no formato JSON para o computador.
+Código carreagado no arduino que é responsavel por fazer a leitura dos sensores, calcular e processar os dados para envia-los via serial no formato JSON para o computador.
 
 São utilizadas as seguintes bibliotecas:
 
@@ -39,9 +39,9 @@ São utilizadas as seguintes bibliotecas:
  
 ### samplingTool
     
-    Script responsável por receber o JSON via serial, processa-lo e salvar as informações obtidas de maneira ordenada em um arquivo CSV.
+Script responsável por receber o JSON via serial, processa-lo e salvar as informações obtidas de maneira ordenada em um arquivo CSV.
 
-    São utilizadas as seguintes bibliotecas:
+São utilizadas as seguintes bibliotecas:
 
 * pyserial: Para comunicação e leitura da porta serial;
 * json: Para processar as informações recebidas no formato JSON;
