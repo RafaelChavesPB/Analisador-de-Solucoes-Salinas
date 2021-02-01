@@ -84,7 +84,7 @@ void loop()
     controlVoltage = ads.toVoltage(ads.readADC(1));
     concentration = concentrationCalc();
     density = densityCalc();
-     massFlowRate = massFlowRateCalc();
+    massFlowRate = massFlowRateCalc();
     output = makeDataPackage();
     Serial.println(output);
     startTime = millis();

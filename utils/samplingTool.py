@@ -11,7 +11,7 @@ labels = ["Tempo","Tensão", "Temperatura", "Concentração",
           "Densidade", "Vazão volumétrica", "Vazão mássica"]
 keys = ["capacitorVoltage", "temperature", "concentration",
             "density", "volumetricFlowRate", "massFlowRate"]
-serialInput = serial.Serial('/dev/ttyUSB0')
+serialInput = serial.Serial('/dev/ttyACM0')
 inputDataList = {}
 for key in keys:
     inputDataList[key]=[]
