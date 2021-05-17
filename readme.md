@@ -1,5 +1,5 @@
 # AnalyseSS - Analisador de propriedades de soluções salinas
-## Skills utilizadas:
+## Etapas do projeto:
 
 1. Elaboração de sistema utilizando um microcontrolador;
 1. Utilização de sensores;
